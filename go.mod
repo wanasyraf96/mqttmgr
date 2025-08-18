@@ -1,4 +1,4 @@
-module mqttmgr
+module github.com/wanasyraf96/go_mqttmgr
 
 go 1.24.1
 
