@@ -121,8 +121,8 @@ func newV5Client(ctx context.Context, cfg ConnConfig, log *slog.Logger) (*Client
 	}
 
 	if cfg.Username != "" {
-		cfg.Username = acfg.ConnectUsername
-		cfg.Password = string(acfg.ConnectPassword)
+		acfg.ConnectUsername = cfg.Username
+		acfg.ConnectPassword = []byte(cfg.Password)
 	}
 
 	if cfg.LWT != nil {
