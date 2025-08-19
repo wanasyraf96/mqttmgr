@@ -168,31 +168,21 @@ func (c *Client) initialConnectWithBackoff(ctx context.Context) error {
 	if p.Initial <= 0 {
 		p.Initial = 1 * time.Second
 	}
-
 	if p.Max <= 0 {
 		p.Max = 1 * time.Minute
 	}
-
 	if p.Jitter <= 0 {
 		p.Jitter = 0.2
 	}
 
-	backoff := p.Initial
-	for {
-		if err := c.cm.AwaitConnection(ctx); err == nil {
-			return nil
-		} else {
-			c.log.Warn("await connection failed; backing off", "delay", backoff, "err", err)
-		}
-		select {
-		case <-time.After(applyJitter(backoff, p.Jitter)):
-			if backoff *= 2; backoff > p.Max {
-				backoff = p.Max
-			}
-		case <-ctx.Done():
-			return ctx.Err()
-		}
+	// Try just once so it won’t hang forever
+	err := c.cm.AwaitConnection(ctx)
+	if err != nil {
+		c.log.Warn("initial connection failed", "err", err)
+		// return nil so app continues to run, autopaho will retry internally
+		return nil
 	}
+	return nil
 }
 
 func (c *Client) Publish(ctx context.Context, req PublishReq) error {
