@@ -149,10 +149,17 @@ func newV5Client(ctx context.Context, cfg ConnConfig, log *slog.Logger) (*Client
 	}
 	c.cm = cm
 
-	// Initial connect with backoff & jitter (Autopaho reconnect afterward)
-	if err := c.initialConnectWithBackoff(ctx); err != nil {
-		return nil, err
+	if !cfg.DisableReconnect {
+		// Initial connect with backoff & jitter (Autopaho reconnect afterward)
+		if err := c.initialConnectWithBackoff(ctx); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := c.cm.AwaitConnection(ctx); err != nil {
+			return nil, err
+		}
 	}
+
 	return c, nil
 }
 

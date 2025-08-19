@@ -20,18 +20,19 @@ type Will struct {
 }
 
 type ConnConfig struct {
-	Name          string
-	Brokers       []string
-	ClientID      string
-	Username      string
-	Password      string
-	TLSConfig     *tls.Config
-	KeepAlive     time.Duration
-	CleanStart    bool
-	SessionExpiry time.Duration
-	LWT           *Will
-	DefaultQoS    byte
-	Reconnect     ReconnectPolicy
+	Name             string
+	Brokers          []string
+	ClientID         string
+	Username         string
+	Password         string
+	TLSConfig        *tls.Config
+	KeepAlive        time.Duration
+	CleanStart       bool
+	SessionExpiry    time.Duration
+	LWT              *Will
+	DefaultQoS       byte
+	Reconnect        ReconnectPolicy
+	DisableReconnect bool
 }
 
 type Message struct {
