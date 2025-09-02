@@ -38,7 +38,11 @@ func newV5Client(ctx context.Context, cfg ConnConfig, log *slog.Logger) (*Client
 	tlsCfg := cfg.TLSConfig
 
 	if needsTLS(cfg.Brokers) && tlsCfg == nil {
-		tlsCfg = &tls.Config{MinVersion: tls.VersionTLS12}
+		tlsCfg = &tls.Config{
+			MinVersion:         tls.VersionTLS12,
+			InsecureSkipVerify: true,
+			Certificates:       []tls.Certificate{},
+		}
 	}
 
 	c := &Client{
@@ -61,8 +65,11 @@ func newV5Client(ctx context.Context, cfg ConnConfig, log *slog.Logger) (*Client
 
 	acfg := autopaho.ClientConfig{
 		BrokerUrls: uurls,
-		TlsCfg:     tlsCfg,
-		KeepAlive:  uint16(durationOr(cfg.KeepAlive, 60*time.Second)),
+		TlsCfg: &tls.Config{
+			InsecureSkipVerify: true,
+			Certificates:       []tls.Certificate{},
+		},
+		KeepAlive: uint16(durationOr(cfg.KeepAlive, 60*time.Second)),
 		OnConnectionUp: func(cm *autopaho.ConnectionManager, ca *paho.Connack) {
 			log.Info("connection up", "session_present", ca.SessionPresent)
 
