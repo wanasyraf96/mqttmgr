@@ -65,11 +65,8 @@ func newV5Client(ctx context.Context, cfg ConnConfig, log *slog.Logger) (*Client
 
 	acfg := autopaho.ClientConfig{
 		BrokerUrls: uurls,
-		TlsCfg: &tls.Config{
-			InsecureSkipVerify: true,
-			Certificates:       []tls.Certificate{},
-		},
-		KeepAlive: uint16(durationOr(cfg.KeepAlive, 60*time.Second)),
+		TlsCfg:     tlsCfg,
+		KeepAlive:  uint16(durationOr(cfg.KeepAlive, 60*time.Second)),
 		OnConnectionUp: func(cm *autopaho.ConnectionManager, ca *paho.Connack) {
 			log.Info("connection up", "session_present", ca.SessionPresent)
 
